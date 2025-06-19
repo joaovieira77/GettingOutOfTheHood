@@ -68,13 +68,16 @@ const SongPage = () => {
   }, [data, latestDate]);
 
   return (
-    <div className="w-full min-h-screen mx-auto p-6 bg-[#261633] flex flex-col items-center relative text-white">
+    <div className="w-full min-h-screen mx-auto p-6 bg-[#261633] flex flex-col items-center relative text-white"
+    style={{ fontFamily: "var(--font-jetbrains-mono)" }} >
       <div className="absolute top-4 left-4 z-20">
         <Image src="/Spotify.png" alt="Logo" width={48} height={48} />
       </div>
 
-      <div className="max-w-lg w-full mt-15">
-        <div className="flex justify-between items-center mb-1">
+      <div className="max-w-lg w-full mt-15"
+      >
+        <div className="flex justify-between items-center mb-1"
+        >
           <h1 className="text-xl font-bold">{track}</h1>
           <span className="text-white-500">~{totalMinutes} min</span>
         </div>

@@ -129,9 +129,10 @@ export default function TopPage() {
             <button
               key={v}
               onClick={() => setView(v)}
-              className={`px-4 py-2 rounded-full text-sm font-medium ${
+              className={` px-4 py-2 rounded-full text-sm font-medium ${
                 view === v ? 'bg-[#460B37] text-white' : 'bg-gray-200 text-black'
               }`}
+              style={{ fontFamily: "var(--font-jetbrains-mono)" }}
             >
               {v.charAt(0).toUpperCase() + v.slice(1)}
             </button>
@@ -147,6 +148,7 @@ export default function TopPage() {
               className={`px-3 py-1 whitespace-nowrap rounded-full text-xs font-medium ${
                 period === p ? 'bg-[#460B37] text-white' : 'bg-gray-200 text-black'
               }`}
+              style={{ fontFamily: "var(--font-geist-mono)" }}
             >
               {p}
             </button>
@@ -167,10 +169,12 @@ export default function TopPage() {
                   className="flex justify-between items-center bg-[#780251] px-4 py-2 w-full h-full hover:bg-[#a03a7a] transition-colors"
                 >
                   <div className="flex flex-col">
-                    <span className="font-semibold text-white">
+                    <span className="font-semibold text-white"
+                     style={{ fontFamily: "var(--font-jetbrains-mono)" }}>
                       {rank}. {title}
                     </span>
-                    {subtitle && <span className="text-sm text-gray-400">{subtitle}</span>}
+                    {subtitle && <span className="text-sm text-gray-400"
+                   >{subtitle}</span>}
                   </div>
                   <span className="text-xs text-gray-400">{Math.round(totalMs/60000)} min</span>
                 </Link>

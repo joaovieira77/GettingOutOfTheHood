@@ -104,7 +104,8 @@ const ArtistPage = () => {
   const artistPercent = allTotalMs > 0 ? ((artistTotalMs / allTotalMs) * 100).toFixed(1) : '0.0'
 
   return (
-    <div className="w-full min-h-screen mx-auto p-6 bg-[#261633] flex flex-col items-center relative text-white">
+    <div className="w-full min-h-screen mx-auto p-6 bg-[#261633] flex flex-col items-center relative text-white"
+     style={{ fontFamily: "var(--font-jetbrains-mono)" }}>
       <div className="absolute top-4 left-4 z-20">
         <Image src="/Spotify.png" alt="Logo" width={48} height={48} />
       </div>

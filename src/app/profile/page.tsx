@@ -72,7 +72,8 @@ export default function ProfilePage() {
   if (!stats) return <div className="text-white p-6">Loading...</div>;
 
   return (
-    <main className="bg-[#261633] min-h-screen max-w-md mx-auto px-4 py-8 text-white"> 
+    <main className="bg-[#261633] min-h-screen max-w-md mx-auto px-4 py-8 text-white"
+     style={{ fontFamily: "var(--font-jetbrains-mono)" }}> 
    <div className="absolute top-4 left-4 z-20">
                <Image src="/Spotify.png" alt="Logo" width={48} height={48} />
              </div>

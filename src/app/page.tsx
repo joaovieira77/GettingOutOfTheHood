@@ -179,10 +179,13 @@ export default function Home() {
 
   return (
     <WavyBackground waveHeight={200} waveWidth={100} waveLength={1000}>
-      <h1 className="text-4xl font-bold text-white mb-2 text-center">
+      <h1 className=" text-4xl font-bold text-white mb-2 text-center"
+      style={{ fontFamily: "var(--font-jetbrains-mono)" }}>
+        
         Hello,
       </h1>
-      <p className="text-2xl text-white mb-10 text-center">
+      <p className=" text-2xl text-white mb-10 text-center"
+      style={{ fontFamily: "var(--font-geist-mono)" }}>
         Welcome to Spotidados
       </p>
       <div className="w-full flex justify-center">
@@ -192,7 +195,8 @@ export default function Home() {
             type="button"
           >
             <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#E2CBFF_0%,#393BB2_50%,#E2CBFF_100%)]" />
-            <span className="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-full bg-slate-950 px-3 py-1 text-sm font-medium text-white backdrop-blur-3xl">
+            <span className="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-full bg-slate-950 px-3 py-1 text-sm font-medium text-white backdrop-blur-3xl"
+             style={{ fontFamily: "var(--font-jetbrains-mono)" }}>
               Get Started
             </span>
           </button>

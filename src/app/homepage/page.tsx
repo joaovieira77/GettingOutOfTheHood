@@ -160,10 +160,12 @@ export default function Home() {
                 ? 'bg-[#460B37] text-white'
                 : 'bg-gray-200 text-gray-700'
             }`}
+             style={{ fontFamily: "var(--font-jetbrains-mono)" }}
           >
             {v === 'season'
               ? 'Seasonal Distribution'
               : 'Most Listened Time'}
+              
           </button>
         ))}
       </div>
@@ -174,6 +176,7 @@ export default function Home() {
           title="Listening by Season"
           labels={stats.topSeasons.map(([s]) => s)}
           values={stats.topSeasons.map(([, ms]) => ms)}
+          
         />
       ) : (
         <BarChart
@@ -186,7 +189,9 @@ export default function Home() {
       {/* Top Songs */}
       <section>
         <div className="flex justify-between items-center mb-2">
-          <h2 className="text-base font-semibold text-white">Songs</h2>
+          <h2 className="text-base font-semibold text-white"
+          
+          >Songs</h2>
           <div className="flex gap-2">
             {['Winter','Spring','Summer','Fall'].map(s => (
               <button
@@ -197,7 +202,8 @@ export default function Home() {
                     ? 'bg-[#460B37] text-white'
                     : 'bg-gray-200 text-gray-700'
                 }`}
-              >
+                
+              style={{ fontFamily: "var(--font-geist-mono)" }} >
                 {s}
               </button>
             ))}
@@ -206,6 +212,7 @@ export default function Home() {
         <ul
           className={`${getSeasonBg(seasonFilter)}
                       rounded-lg shadow text-sm text-gray-800`}
+        
         >
           {topSongs.map(([song, ms], i) => {
             const artist = stats.trackArtistMap[song]
@@ -215,10 +222,12 @@ export default function Home() {
                 className="flex justify-between px-4 py-2"
               >
                 <div className="flex flex-col">
-                  <span className="font-medium text-white">
+                  <span className=" font-medium text-white"
+                  style={{ fontFamily: "var(--font-jetbrains-mono)" }}>
                     {i + 1}. {song}
                   </span>
-                  <span className="text-xs text-gray-200">
+                  <span className="text-xs text-gray-200"
+                  >
                     {artist}
                   </span>
                 </div>
@@ -246,7 +255,7 @@ export default function Home() {
             ? 'bg-[#460B37] text-white'
             : 'bg-gray-200 text-gray-700'
         }`}
-      >
+       style={{ fontFamily: "var(--font-geist-mono)" }}>
         {s}
       </button>
     ))}
@@ -261,7 +270,7 @@ export default function Home() {
             <li
               key={artist}
               className="flex justify-between px-4 py-2"
-            >
+            style={{ fontFamily: "var(--font-jetbrains-mono)" }}>
               <span className="text-white">
                 {i + 1}. {artist}
               </span>
