@@ -50,16 +50,16 @@ const getSeasonBg = (season: Season): string => {
 }
 
 export default function Home() {
-  const [data, setData] = useState<Entry[]>([])
-  const [view, setView] = useState<'season' | 'timeofday'>('season')
-  const [seasonFilter, setSeasonFilter] = useState<Season>('Winter')
-  const [artistSeasonFilter, setArtistSeasonFilter] = useState<Season>('Winter')
+  const [data, setData] = useState<Entry[]>([]) // Raw listening data
+  const [view, setView] = useState<'season' | 'timeofday'>('season') // Chart toggle view
+  const [seasonFilter, setSeasonFilter] = useState<Season>('Winter') // Season for top songs
+  const [artistSeasonFilter, setArtistSeasonFilter] = useState<Season>('Winter') // Season for top artists
 
  useEffect(() => {
     fetch('/history.json')
       .then(res => res.json())
       .then((json: any[]) => {
-        // sanity check & filter shape
+        //  filter shape
         setData(
           json.filter(e =>
             typeof e.ms_played === 'number' &&
@@ -94,8 +94,8 @@ export default function Home() {
         skipped
       } = entry
 
-      // 1) skip podcasts (no track/artist)
-      // 2) skip manually skipped plays
+      // skip podcasts (no track/artist)
+      //  skip manually skipped plays
       
 
       // remember who the artist is for this track
@@ -107,18 +107,19 @@ export default function Home() {
       const season = getSeason(date)
       const hour = date.getUTCHours()
 
-      seasonCount[season] += ms_played
-      hourCount[hour] = (hourCount[hour] || 0) + ms_played
+      seasonCount[season] += ms_played // accumulate ms_played for the season
+      // accumulate ms_played for the hour
+      hourCount[hour] = (hourCount[hour] || 0) + ms_played //
       if (track) {
         seasonalSongs[season][track] =
-          (seasonalSongs[season][track] || 0) + ms_played
+          (seasonalSongs[season][track] || 0) + ms_played // accumulate ms_played for the track
       }
       if (artist) {
         seasonalArtists[season][artist] =
-          (seasonalArtists[season][artist] || 0) + ms_played
+          (seasonalArtists[season][artist] || 0) + ms_played // accumulate ms_played for the artist
       }
     })
-
+// Sort the seasonal counts and hours
     const sort = (obj: Record<string, number>) =>
       Object.entries(obj).sort((a, b) => b[1] - a[1])
 
@@ -132,8 +133,7 @@ export default function Home() {
   }, [data])
 
   // take top 5 songs & artists for the selected season
-  const topSongs = Object
-    .entries(stats.songs[seasonFilter])
+  const topSongs = Object.entries(stats.songs[seasonFilter])
     .sort((a, b) => b[1] - a[1])
     .slice(0, 5)
 
@@ -264,7 +264,7 @@ export default function Home() {
 
         <ul
           className={`${getSeasonBg(artistSeasonFilter)}
-                      rounded-lg  shadow text-sm text-gray-800`}
+                      rounded-lg  shadow text-sm text-gray-800 mb-10`}
         >
           {topArtists.map(([artist, ms], i) => (
             <li

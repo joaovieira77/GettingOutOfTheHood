@@ -19,7 +19,7 @@ type View   = 'songs' | 'artists'
 interface TopItem {
   rank: number
   title: string
-  subtitle?: string   // for songs: artist name; for artists: undefined
+  subtitle?: string   // for songs: artist name;
   totalMs: number
 }
 
@@ -28,10 +28,10 @@ const periods: Period[] = ['1 week', '1 month', '6 months', 'All time']
 export default function TopPage() {
   const [view, setView] = useState<View>('songs')
   const [period, setPeriod] = useState<Period>('All time')
-  const [data, setData] = useState<Entry[]>([])
+  const [data, setData] = useState<Entry[]>([]) 
   const [latestDate, setLatestDate] = useState<Date | null>(null)
 
-  // 1) load the full history and find latest date
+  //  load the full history and find latest date
   useEffect(() => {
     fetch('/history.json')
       .then(res => res.json())
@@ -49,6 +49,7 @@ export default function TopPage() {
         const dates = filtered
           .filter(e => !!e.ts)
           .map(e => new Date(e.ts))
+
         if (dates.length > 0) {
           const mostRecent = dates.reduce((latest, current) => current > latest ? current : latest)
           setLatestDate(mostRecent)
@@ -57,7 +58,7 @@ export default function TopPage() {
       .catch(console.error)
   }, [])
 
-  // 2) derive topItems based on view and period
+  //  songs and artists are sorted
   const topItems = useMemo(() => {
     if (!latestDate) return [];
 
@@ -85,14 +86,14 @@ export default function TopPage() {
         })
       : data;
 
-    // Group and rank as
+    // Group  data by track/artist
     const map = new Map<string, number>();
     filteredData.forEach(({ ms_played, master_metadata_track_name: track, master_metadata_album_artist_name: artist }) => {
       const safeArtist = artist ?? 'Unknown Artist';
       const key = view === 'songs'
         ? `${track}@@@${safeArtist}`
         : safeArtist;
-      map.set(key, (map.get(key) || 0) + ms_played);
+      map.set(key, (map.get(key) || 0) + ms_played); // add played time
     });
 
     const arr: TopItem[] = Array.from(map.entries())
@@ -106,7 +107,7 @@ export default function TopPage() {
       })
       .sort((a, b) => b.totalMs - a.totalMs)
       .slice(0, 100)
-      .map((item, i) => ({ ...item, rank: i + 1 }));
+      .map((item, i) => ({ ...item, rank: i + 1 })); // assign ranks
 
     return arr;
   }, [data, view, period, latestDate]);
@@ -116,8 +117,9 @@ export default function TopPage() {
       <main className="bg-[#261633] min-h-screen max-w-md mx-auto px-4 pt-20 pb-20 space-y-4 text-white">
       <div className="absolute top-4 left-4 z-20">
             <Image src="/Spotify.png" alt="Logo" width={48} height={48} />
-          </div>
-        <h1 className="text-center text-2xl font-bold">
+          </div>  
+
+        <h1 className="text-center text-2xl font-bold"> 
           Top #100 {view === 'songs' ? 'Songs' : 'Artists'}
         </h1>
 
@@ -139,7 +141,7 @@ export default function TopPage() {
           ))}
         </div>
 
-        {/* period toggle (stubbed) */}
+        {/* period toggle  */}
         <div className="flex justify-center space-x-2 overflow-x-auto pb-2">
           {periods.map(p => (
             <button

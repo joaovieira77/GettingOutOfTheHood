@@ -7,6 +7,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 const SongPage = () => {
+    // Extract 'track' and 'artist' from the URL
   const searchParams = useSearchParams();
   const track = searchParams.get('track') || 'Unknown Track';
   const artist = searchParams.get('artist') || 'Unknown Artist';
@@ -20,6 +21,7 @@ const SongPage = () => {
     fetch('/history.json')
       .then(res => res.json())
       .then((json: any[]) => {
+         // Filter entries that match the selected track and artist
         const filtered = json.filter((e: any) =>
           typeof e.ms_played === 'number' &&
           e.master_metadata_track_name === track &&
@@ -28,6 +30,8 @@ const SongPage = () => {
         );
         setData(filtered);
 
+ 
+        // Find the most recent timestamp
         if (filtered.length > 0) {
           const latest = filtered.reduce(
             (a: typeof filtered[0], b: typeof filtered[0]) =>
@@ -39,6 +43,7 @@ const SongPage = () => {
       .catch(console.error);
   }, [track, artist]);
 
+  // data for display
   const album = data[0]?.master_metadata_album_album_name || 'Unknown Album';
   const totalPlays = data.length;
   const totalMinutes = Math.round(data.reduce((acc, e) => acc + e.ms_played, 0) / 60000);
@@ -49,18 +54,19 @@ const SongPage = () => {
 
     const months: Record<string, number> = {};
 
-    for (let i = 5; i >= 0; i--) {
+    for (let i = 5; i >= 0; i--) {   // Initialize past 6 months with zero plays
       const d = new Date(latestDate.getFullYear(), latestDate.getMonth() - i, 1);
       const label = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
       months[label] = 0;
     }
+    // Count number of plays in each month
 
     data.forEach(entry => {
       const date = new Date(entry.ts);
       const label = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
       if (label in months) months[label]++;
     });
-
+ // Update state for chart rendering
     setPlaysPerMonth({
       labels: Object.keys(months),
       values: Object.values(months),

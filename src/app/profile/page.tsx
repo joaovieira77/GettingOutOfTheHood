@@ -15,6 +15,7 @@ interface Entry {
 
 export default function ProfilePage() {
   const [data, setData] = useState<Entry[]>([]);
+  const [latestDate, setLatestDate] = useState<Date | null>(null);
 
   useEffect(() => {
     fetch("/history.json")
@@ -28,37 +29,49 @@ export default function ProfilePage() {
             e.skipped !== true
         );
         setData(filtered);
-      });
+
+        const dates = filtered
+          .filter((e) => !!e.ts)
+          .map((e) => new Date(e.ts));
+  // Extracts all valid timestamps
+        if (dates.length > 0) {
+          const mostRecent = dates.reduce((latest, current) =>
+            current > latest ? current : latest // Find latest play date
+          );
+          setLatestDate(mostRecent);
+        }
+      })
+      .catch(console.error);
   }, []);
 
   const stats = useMemo(() => {
     if (data.length === 0) return null;
 
     const totalMs = data.reduce((sum, e) => sum + e.ms_played, 0);
-    const totalMinutes = Math.round(totalMs / 60000);
+    const totalMinutes = Math.round(totalMs / 60000);     // Total listening time in minutes
 
     const artistMap = new Map<string, number>();
     data.forEach((e) => {
       const artist = e.master_metadata_album_artist_name;
       if (artist) artistMap.set(artist, (artistMap.get(artist) || 0) + e.ms_played);
-    });
+    });    // Creates a map: artist → total ms_played
 
     const topArtist = Array.from(artistMap.entries())
-      .sort((a, b) => b[1] - a[1])[0]?.[0];
-
+      .sort((a, b) => b[1] - a[1])[0]?.[0];// Top artist by listening time
+ 
     const artistCount = new Set(
       data.map((e) => e.master_metadata_album_artist_name)
-    ).size;
+    ).size;    // Number of unique artists
 
     const lastPlayed = data.reduce((latest, entry) => {
       return new Date(entry.ts) > new Date(latest.ts) ? entry : latest;
-    });
+    });  // Most recent track played
 
     const uniqueDays = new Set(
       data.map((e) => new Date(e.ts).toISOString().split("T")[0])
-    ).size;
+    ).size;   // Count of unique listening days
 
-    const avgPerDay = Math.round(totalMinutes / (uniqueDays || 1));
+    const avgPerDay = Math.round(totalMinutes / (uniqueDays || 1));    // Average listening time per day
 
     return {
       totalMinutes,
@@ -69,19 +82,57 @@ export default function ProfilePage() {
     };
   }, [data]);
 
+  const streak = useMemo(() => {
+    if (data.length === 0) return 0;
+
+    const dias = new Set(
+      data.map((e) => new Date(e.ts).toISOString().split("T")[0])
+    );
+    // Unique dates you listened to music
+    const diasArray = Array.from(dias)
+      .map((d) => new Date(d))
+      .sort((a, b) => b.getTime() - a.getTime());   // Sorted array of those dates, newest first
+
+    let streakCount = 1;
+    for (let i = 1; i < diasArray.length; i++) {
+      const diff =
+        (diasArray[i - 1].getTime() - diasArray[i].getTime()) / (1000 * 60 * 60 * 24);
+      if (diff === 1) {
+        streakCount++;
+      } else if (diff > 1) {
+        break;
+      }
+    }
+
+    return streakCount;
+  }, [data]);
+// get top 3 artists by total listening time
+  const topArtists = useMemo(() => {
+    const artistMap = new Map<string, number>();
+    data.forEach((e) => {
+      const artist = e.master_metadata_album_artist_name;
+      if (artist) artistMap.set(artist, (artistMap.get(artist) || 0) + e.ms_played);
+    });
+
+    return Array.from(artistMap.entries())
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 3)
+      .map(([artist]) => artist);
+  }, [data]);
+
   if (!stats) return <div className="text-white p-6">Loading...</div>;
 
   return (
     <main className="bg-[#261633] min-h-screen max-w-md mx-auto px-4 py-8 text-white"
-     style={{ fontFamily: "var(--font-jetbrains-mono)" }}> 
-   <div className="absolute top-4 left-4 z-20">
-               <Image src="/Spotify.png" alt="Logo" width={48} height={48} />
-             </div>
+     style={{ fontFamily: "var(--font-jetbrains-mono)" }}>
+      <div className="absolute top-4 left-4 z-20">
+        <Image src="/Spotify.png" alt="Logo" width={48} height={48} />
+      </div>
+
       <div className="flex flex-col items-center mb-4">
-       
         <div className="mt-2 text-center">
           <h2 className="text-xl font-semibold">Username</h2>
-          <span className="text-sm text-gray-300">Streak 🔥</span>
+          <span className="text-sm text-gray-300">Streak 🔥 {streak} days</span>
         </div>
       </div>
 
@@ -128,9 +179,15 @@ export default function ProfilePage() {
         </div>
       </section>
 
-      <section className="bg-[#B53304] rounded-lg p-4 text-white text-center">
-        <p className="text-sm">#1</p>
-        <h4 className="text-lg font-semibold">{stats.topArtist}</h4>
+      <section className="bg-[#B53304] rounded-lg p-4 text-white text-center mb-10">
+        <p className="text-sm mb-2">Top 3 Artists</p>
+        <ol className="text-lg font-semibold space-y-1">
+          {topArtists.map((artist, index) => (
+            <li key={artist}>
+              {index + 1}. {artist}
+            </li>
+          ))}
+        </ol>
       </section>
 
       <NavBar />
